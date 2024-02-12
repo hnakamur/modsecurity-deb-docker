@@ -10,7 +10,7 @@ LUAJIT_DEB_VERSION=v2.1-20231117
 # Ubuntu 22.04
 deb-ubuntu2204: build-ubuntu2204
 	docker run --rm -v ./dist-ubuntu2204:/dist modsecurity-ubuntu2204 bash -c \
-	"cp /src/modsecurity*${PKG_VERSION}* /dist/"
+	"cp /src/{lib,}modsecurity*${PKG_VERSION}* /dist/"
 
 build-ubuntu2204: buildkit-logunlimited
 	mkdir -p dist-ubuntu2204
@@ -34,7 +34,7 @@ run-ubuntu2204:
 # Debian 12
 deb-debian12: build-debian12
 	docker run --rm -v ./dist-debian12:/dist modsecurity-debian12 bash -c \
-	"cp /src/modsecurity*${PKG_VERSION}* /dist/"
+	"cp /src/{lib,}modsecurity*${PKG_VERSION}* /dist/"
 
 build-debian12: buildkit-logunlimited
 	mkdir -p dist-debian12
