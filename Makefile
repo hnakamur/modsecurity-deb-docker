@@ -9,11 +9,12 @@ LUAJIT_DEB_VERSION=v2.1-20231117
 
 # Ubuntu 22.04
 deb-ubuntu2204: build-ubuntu2204
-	docker run --rm -v ./dist-ubuntu2204:/dist modsecurity-ubuntu2204 bash -c \
+	docker run --rm -v ./modsecurity-${PKG_VERSION}-${PKG_REL_PREFIX}ubuntu22.04-dist:/dist modsecurity-ubuntu2204 bash -c \
 	"cp /src/{lib,}modsecurity*${PKG_VERSION}* /dist/"
+	tar zcf modsecurity-${PKG_VERSION}-${PKG_REL_PREFIX}ubuntu22.04-dist.tar.gz ./modsecurity-${PKG_VERSION}-${PKG_REL_PREFIX}ubuntu22.04-dist/
 
 build-ubuntu2204: buildkit-logunlimited
-	mkdir -p dist-ubuntu2204
+	sudo mkdir -p modsecurity-${PKG_VERSION}-${PKG_REL_PREFIX}ubuntu22.04-dist
 	(set -x; \
 	git submodule foreach --recursive git remote -v; \
 	git submodule status --recursive; \
@@ -25,19 +26,20 @@ build-ubuntu2204: buildkit-logunlimited
 		--build-arg LUAJIT_DEB_VERSION=${LUAJIT_DEB_VERSION} \
 		--build-arg LUAJIT_DEB_OS_ID=ubuntu2204 \
 		-t modsecurity-ubuntu2204 . \
-	) 2>&1 | tee dist-ubuntu2204/modsecurity_${PKG_VERSION}-${PKG_REL_PREFIX}ubuntu22.04.build.log
-	xz --best --force dist-ubuntu2204/modsecurity_${PKG_VERSION}-${PKG_REL_PREFIX}ubuntu22.04.build.log
+	) 2>&1 | sudo tee modsecurity-${PKG_VERSION}-${PKG_REL_PREFIX}ubuntu22.04-dist/modsecurity_${PKG_VERSION}-${PKG_REL_PREFIX}ubuntu22.04.build.log
+	sudo xz --force modsecurity-${PKG_VERSION}-${PKG_REL_PREFIX}ubuntu22.04-dist/modsecurity_${PKG_VERSION}-${PKG_REL_PREFIX}ubuntu22.04.build.log
 
 run-ubuntu2204:
 	docker run --rm -it modsecurity-ubuntu2204 bash
 
 # Debian 12
 deb-debian12: build-debian12
-	docker run --rm -v ./dist-debian12:/dist modsecurity-debian12 bash -c \
+	docker run --rm -v ./modsecurity-${PKG_VERSION}-${PKG_REL_PREFIX}debian12-dist:/dist modsecurity-debian12 bash -c \
 	"cp /src/{lib,}modsecurity*${PKG_VERSION}* /dist/"
+	tar zcf modsecurity-${PKG_VERSION}-${PKG_REL_PREFIX}debian12-dist.tar.gz ./modsecurity-${PKG_VERSION}-${PKG_REL_PREFIX}debian12-dist/
 
 build-debian12: buildkit-logunlimited
-	mkdir -p dist-debian12
+	sudo mkdir -p modsecurity-${PKG_VERSION}-${PKG_REL_PREFIX}debian12-dist
 	(set -x; \
 	git submodule foreach --recursive git remote -v; \
 	git submodule status --recursive; \
@@ -49,8 +51,8 @@ build-debian12: buildkit-logunlimited
 		--build-arg LUAJIT_DEB_VERSION=${LUAJIT_DEB_VERSION} \
 		--build-arg LUAJIT_DEB_OS_ID=debian12 \
 		-t modsecurity-debian12 . \
-	) 2>&1 | tee dist-debian12/modsecurity_${PKG_VERSION}-${PKG_REL_PREFIX}debian12.build.log
-	xz --best --force dist-debian12/modsecurity_${PKG_VERSION}-${PKG_REL_PREFIX}debian12.build.log
+	) 2>&1 | sudo tee modsecurity-${PKG_VERSION}-${PKG_REL_PREFIX}debian12-dist/modsecurity_${PKG_VERSION}-${PKG_REL_PREFIX}debian12.build.log
+	sudo xz --force modsecurity-${PKG_VERSION}-${PKG_REL_PREFIX}debian12-dist/modsecurity_${PKG_VERSION}-${PKG_REL_PREFIX}debian12.build.log
 
 run-debian12:
 	docker run --rm -it modsecurity-debian12 bash
