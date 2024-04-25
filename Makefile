@@ -5,7 +5,7 @@ DOCKER_NO_CACHE=--no-cache
 endif
 
 LOGUNLIMITED_BUILDER=logunlimited
-LUAJIT_DEB_VERSION=v2.1-20231117
+LUAJIT_DEB_VERSION=2.1.20240314-1hn1
 
 # Ubuntu 22.04
 deb-ubuntu2204: build-ubuntu2204
