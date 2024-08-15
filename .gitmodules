@@ -1,4 +1,4 @@
 [submodule "modsecurity"]
 	path = modsecurity
 	url = https://github.com/hnakamur/ModSecurity
-	branch = deb.v3.0.12.luajit-2.1
+	branch = deb.v3.0.12-2hn1.luajit-2.1
