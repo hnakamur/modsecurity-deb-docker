@@ -1,0 +1,45 @@
+diff --git a/build/lua.m4 b/build/lua.m4
+index 4780d32f..0beae9d6 100644
+--- a/build/lua.m4
++++ b/build/lua.m4
+@@ -6,7 +6,7 @@ AC_DEFUN([CHECK_LUA],
+ [dnl
+ 
+ # Possible names for the lua library/package (pkg-config)
+-LUA_POSSIBLE_LIB_NAMES="lua54 lua5.4 lua-5.4 lua53 lua5.3 lua-5.3 lua52 lua5.2 lua-5.2 lua51 lua5.1 lua-5.1 lua"
++LUA_POSSIBLE_LIB_NAMES="lua54 lua5.4 lua-5.4 lua53 lua5.3 lua-5.3 lua52 lua5.2 lua-5.2 lua51 lua5.1 lua-5.1 luajit lua"
+ 
+ # Possible extensions for the library
+ LUA_POSSIBLE_EXTENSIONS="so la sl dll dylib"
+@@ -176,6 +176,9 @@ AC_DEFUN([CHECK_FOR_LUA_AT], [
+     elif test -e "${path}/include/luajit-2.0/lua.h"; then
+         lua_inc_path="${path}/include/luajit-2.0"
+ 	LUA_VERSION=501
++    elif test -e "${path}/include/luajit-2.1/lua.h"; then
++        lua_inc_path="${path}/include/luajit-2.1"
++	LUA_VERSION=501
+     fi
+ 
+     if test -n "${lua_lib_path}"; then
+diff --git a/others/libinjection/lua/Makefile b/others/libinjection/lua/Makefile
+index 35cfd9a..9b50355 100644
+--- a/others/libinjection/lua/Makefile
++++ b/others/libinjection/lua/Makefile
+@@ -6,7 +6,7 @@
+ #LUA=/usr/bin/lua5.1
+ 
+ # ubuntu luajit 2
+-LUA_FLAGS=-I/usr/include/luajit-2.0 -lluajit-5.1
++LUA_FLAGS=-I/usr/include/luajit-2.1 -lluajit-5.1
+ LUA=luajit
+ 
+ # centos and friends
+@@ -20,7 +20,7 @@ APPLE=$(shell uname -a | grep -c Darwin)
+ # MAC OS X - brew install luajit
+ ifeq ($(APPLE),1)
+ 	SHARED=-dynamiclib
+-	LUA_FLAGS=-I/usr/local/include/luajit-2.0 -L/usr/local/lib -lluajit-5.1
++	LUA_FLAGS=-I/usr/local/include/luajit-2.1 -L/usr/local/lib -lluajit-5.1
+ 	LUA=luajit
+ endif
+ 

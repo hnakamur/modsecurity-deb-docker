@@ -32,6 +32,7 @@ USER ${BUILD_USER}
 WORKDIR ${SRC_DIR}
 ARG PKG_VERSION
 RUN tar cf - --exclude .git --exclude debian modsecurity | xz -c > modsecurity_${PKG_VERSION}.orig.tar.xz
+COPY --chown=${BUILD_USER}:${BUILD_USER} ./debian ${SRC_DIR}/modsecurity/debian/
 WORKDIR ${SRC_DIR}/modsecurity
 ARG PKG_REL_DISTRIB
 RUN sed -i "s/DebRelDistrib/${PKG_REL_DISTRIB}/;s/UNRELEASED/$(lsb_release -cs)/" /src/modsecurity/debian/changelog

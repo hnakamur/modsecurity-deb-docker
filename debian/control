@@ -1,0 +1,37 @@
+Source: modsecurity
+Section: libs
+Priority: optional
+Maintainer: Hiroaki Nakamura <hnakamur@gmail.com>
+Build-Depends: debhelper (>= 13), libyajl-dev, libgeoip-dev, libxml2-dev, libpcre2-dev, libcurl4-openssl-dev, libluajit-5.1-dev, libmaxminddb-dev, libfuzzy-dev, pkg-config, liblmdb-dev, clang
+Rules-Requires-Root: no
+Standards-Version: 4.6.2
+Homepage: https://www.modsecurity.org/
+Vcs-Browser: https://github.com/hnakamur/modsecurity-deb
+Vcs-Git: https://github.com/hnakamur/modsecurity-deb.git
+
+Package: libmodsecurity-dev
+Section: libdevel
+Architecture: any
+Multi-Arch: same
+Depends: libmodsecurity3 (= ${binary:Version}), ${misc:Depends}
+Description: ModSecurity v3 library component (development files)
+ Libmodsecurity is one component of the ModSecurity v3 project. The library
+ codebase serves as an interface to ModSecurity Connectors taking in web
+ traffic and applying traditional ModSecurity processing. In general, it
+ provides the capability to load/interpret rules written in the ModSecurity
+ SecRules format and apply them to HTTP content provided by your application
+ via Connectors.
+ .
+ This package includes the development support files.
+
+Package: libmodsecurity3
+Architecture: any
+Multi-Arch: same
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: ModSecurity v3 library component
+ Libmodsecurity is one component of the ModSecurity v3 project. The library
+ codebase serves as an interface to ModSecurity Connectors taking in web
+ traffic and applying traditional ModSecurity processing. In general, it
+ provides the capability to load/interpret rules written in the ModSecurity
+ SecRules format and apply them to HTTP content provided by your application
+ via Connectors.

@@ -1,0 +1,17 @@
+modsecurity (3.0.13-1hn1DebRelDistrib) UNRELEASED; urgency=medium
+
+  * Upstream release.
+
+ -- Hiroaki Nakamura <hnakamur@gmail.com>  Sat, 05 Oct 2024 11:23:47 +0900
+
+modsecurity (3.0.12-2hn1DebRelDistrib) UNRELEASED; urgency=medium
+
+  * Increment release.
+
+ -- Hiroaki Nakamura <hnakamur@gmail.com>  Mon, 29 Jul 2024 17:14:55 +0900
+
+modsecurity (3.0.12-1hn1DebRelDistrib) UNRELEASED; urgency=medium
+
+  * Initial release.
+
+ -- Hiroaki Nakamura <hnakamur@gmail.com>  Sun, 11 Feb 2024 20:46:34 +0900

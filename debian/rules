@@ -1,0 +1,43 @@
+#!/usr/bin/make -f
+
+DEB_HOST_MULTIARCH ?= $(shell dpkg-architecture -qDEB_HOST_MULTIARCH)
+# move modsec-rules-check (lib debugging/testing tool) to libexec to avoid
+# an extra package while keeping the library package multiarch
+CONFIGURE_EXTRA_FLAGS += --bindir=\$${prefix}/lib/$(DEB_HOST_MULTIARCH)/libexec --libdir=\$${prefix}/lib/$(DEB_HOST_MULTIARCH) --with-pcre2 --with-pcre=no --enable-examples
+
+export DH_VERBOSE = 1
+
+export DEB_BUILD_MAINT_OPTIONS = hardening=-all optimize=-lto
+export CXX=clang++
+export CC=clang
+
+%:
+	dh $@
+
+override_dh_auto_configure:
+	CXX=$(CXX) CC=$(CC) dh_auto_configure -- $(CONFIGURE_EXTRA_FLAGS)
+
+override_dh_auto_install:
+	dh_auto_install
+	# clean dependency_libs in .la files (Policy 10.2)
+	sed -i "/dependency_libs/ s/'.*'/''/" $$(find debian/tmp/ -name '*.la')
+
+override_dh_clean:
+	dh_clean
+	rm -rf .pc
+	rm -rf configure~
+	rm -f src/config.h.in~
+	rm -f config.log
+	rm -f configure aclocal.m4 configure config.guess
+	rm -f Makefile.in doc/Makefile.in examples/Makefile.in examples/multiprocess_c/Makefile.in \
+	examples/reading_logs_via_rule_message/Makefile.in examples/reading_logs_with_offset/Makefile.in \
+	examples/simple_example_using_c/Makefile.in examples/using_bodies_in_chunks/Makefile.in others/Makefile.in \
+	src/Makefile.in src/parser/Makefile.in test/Makefile.in test/benchmark/Makefile.in test/fuzzer/Makefile.in \
+	tools/Makefile.in tools/rules-check/Makefile.in
+	rm -f modsecurity.pc
+	find test/test-cases \( -name '*.json.log' -o -name '*.json.trs' \) -delete
+
+override_dh_dwz:
+	# skip dwz since it does not work well with clang >= 14.
+	# https://groups.google.com/g/linux.debian.devel/c/BdkfKzS8Z70
+	true
