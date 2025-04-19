@@ -1,3 +1,10 @@
+modsecurity (3.0.14-1hn1DebRelDistrib) UNRELEASED; urgency=medium
+
+  * Upstream release.
+  * Update LuaJIT to 2.1.20250117-1hn1
+
+ -- Hiroaki Nakamura <hnakamur@gmail.com>  Sat, 19 Apr 2025 17:16:37 +0900
+
 modsecurity (3.0.13-1hn1DebRelDistrib) UNRELEASED; urgency=medium
 
   * Upstream release.
