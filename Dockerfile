@@ -1,13 +1,13 @@
 # syntax=docker/dockerfile:1
 ARG OS_TYPE=ubuntu
 ARG OS_VERSION=22.04
-FROM ${OS_TYPE}:${OS_VERSION} as setup_clang
+FROM ${OS_TYPE}:${OS_VERSION} AS setup_clang
 
 # setup clang
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get -y install curl lsb-release dpkg clang
 
-FROM setup_clang as build_modsecurity
+FROM setup_clang AS build_modsecurity
 
 ARG LUAJIT_DEB_VERSION
 ARG LUAJIT_DEB_OS_ID
