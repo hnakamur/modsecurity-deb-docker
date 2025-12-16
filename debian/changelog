@@ -1,3 +1,9 @@
+modsecurity (3.0.14-1hn2DebRelDistrib) UNRELEASED; urgency=medium
+
+  * Allow partial processing of XML and JSON request body.
+
+ -- Hiroaki Nakamura <hnakamur@gmail.com>  Tue, 16 Dec 2025 09:36:19 +0900
+
 modsecurity (3.0.14-1hn1DebRelDistrib) UNRELEASED; urgency=medium
 
   * Upstream release.

@@ -1,0 +1,111 @@
+diff --git a/src/request_body_processor/json.cc b/src/request_body_processor/json.cc
+index f56704ef..86004c8c 100644
+--- a/src/request_body_processor/json.cc
++++ b/src/request_body_processor/json.cc
+@@ -29,7 +29,8 @@ namespace RequestBodyProcessor {
+ static const double json_depth_limit_default = 10000.0;
+ static const char* json_depth_limit_exceeded_msg = ". Parsing depth limit exceeded";
+ 
+-JSON::JSON(Transaction *transaction) : m_transaction(transaction),
++JSON::JSON(Transaction *transaction, unsigned int allow_partial_values)
++    : m_transaction(transaction),
+     m_handle(NULL),
+     m_current_key(""),
+     m_max_depth(json_depth_limit_default),
+@@ -69,7 +70,7 @@ JSON::JSON(Transaction *transaction) : m_transaction(transaction),
+      */
+     m_handle = yajl_alloc(&callbacks, NULL, this);
+ 
+-    yajl_config(m_handle, yajl_allow_partial_values, 0);
++    yajl_config(m_handle, yajl_allow_partial_values, allow_partial_values);
+ }
+ 
+ 
+diff --git a/src/request_body_processor/json.h b/src/request_body_processor/json.h
+index 961ea94e..d542e852 100644
+--- a/src/request_body_processor/json.h
++++ b/src/request_body_processor/json.h
+@@ -57,7 +57,7 @@ class JSONContainerMap : public JSONContainer {
+ 
+ class JSON {
+  public:
+-    explicit JSON(Transaction *transaction);
++    explicit JSON(Transaction *transaction, unsigned int allow_partial_values = 0);
+     ~JSON();
+ 
+     static bool init();
+diff --git a/src/request_body_processor/xml.cc b/src/request_body_processor/xml.cc
+index 6d8a5ec1..b0e9edb1 100644
+--- a/src/request_body_processor/xml.cc
++++ b/src/request_body_processor/xml.cc
+@@ -25,8 +25,8 @@ namespace RequestBodyProcessor {
+ 
+ #ifdef WITH_LIBXML2
+ 
+-XML::XML(Transaction *transaction)
+-    : m_transaction(transaction) {
++XML::XML(Transaction *transaction, bool require_well_formed)
++    : m_transaction(transaction), m_require_well_formed(require_well_formed) {
+     m_data.doc = NULL;
+     m_data.parsing_ctx = NULL;
+     m_data.sax_handler = NULL;
+@@ -107,7 +107,7 @@ bool XML::processChunk(const char *buf, unsigned int size,
+ 
+     /* Not a first invocation. */
+     xmlParseChunk(m_data.parsing_ctx, buf, size, 0);
+-    if (m_data.parsing_ctx->wellFormed != 1) {
++    if (m_require_well_formed && m_data.parsing_ctx->wellFormed != 1) {
+         error->assign("XML: Failed to create parsing context.");
+         ms_dbg_a(m_transaction, 4, "XML: Failed parsing document.");
+         return false;
+@@ -133,7 +133,7 @@ bool XML::complete(std::string *error) {
+         ms_dbg_a(m_transaction, 4, "XML: Parsing complete (well_formed " \
+             + std::to_string(m_data.well_formed) + ").");
+ 
+-        if (m_data.well_formed != 1) {
++        if (m_require_well_formed && m_data.well_formed != 1) {
+             error->assign("XML: Failed parsing document.");
+             ms_dbg_a(m_transaction, 4, "XML: Failed parsing document.");
+             return false;
+diff --git a/src/request_body_processor/xml.h b/src/request_body_processor/xml.h
+index fa8dc786..dc46104e 100644
+--- a/src/request_body_processor/xml.h
++++ b/src/request_body_processor/xml.h
+@@ -45,7 +45,7 @@ typedef struct xml_data xml_data;
+ 
+ class XML {
+  public:
+-    explicit XML(Transaction *transaction);
++    explicit XML(Transaction *transaction, bool require_well_formed = true);
+     ~XML();
+     bool init();
+     bool processChunk(const char *buf, unsigned int size, std::string *err);
+@@ -62,6 +62,7 @@ class XML {
+  private:
+     Transaction *m_transaction;
+     std::string m_header;
++    bool m_require_well_formed;
+ };
+ 
+ #endif
+diff --git a/src/transaction.cc b/src/transaction.cc
+index 85a0c4a2..f810ff6f 100644
+--- a/src/transaction.cc
++++ b/src/transaction.cc
+@@ -138,12 +138,14 @@ Transaction::Transaction(ModSecurity *ms, RulesSet *rules, const char *id,
+         ms->m_session_collection, ms->m_user_collection,
+         ms->m_resource_collection),
+ #ifdef WITH_LIBXML2
+-    m_xml(new RequestBodyProcessor::XML(this)),
++    m_xml(new RequestBodyProcessor::XML(this,
++        this->m_rules->m_requestBodyLimitAction != RulesSet::BodyLimitAction::ProcessPartialBodyLimitAction)),
+ #else
+     m_xml(nullptr),
+ #endif
+ #ifdef WITH_YAJL
+-    m_json(new RequestBodyProcessor::JSON(this)),
++    m_json(new RequestBodyProcessor::JSON(this,
++        this->m_rules->m_requestBodyLimitAction == RulesSet::BodyLimitAction::ProcessPartialBodyLimitAction)),
+ #else
+     m_json(nullptr),
+ #endif

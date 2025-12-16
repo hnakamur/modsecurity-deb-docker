@@ -1,1 +1,2 @@
 luajit-2.1.patch
+allow-partial-xml-json-request-body.patch
