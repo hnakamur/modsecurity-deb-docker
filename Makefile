@@ -5,7 +5,7 @@ DOCKER_NO_CACHE=--no-cache
 endif
 
 LOGUNLIMITED_BUILDER=logunlimited
-LUAJIT_DEB_VERSION=2.1.20250529-1hn1
+LUAJIT_DEB_VERSION=2.1.20260114-1hn1
 
 # Ubuntu 25.10
 deb-ubuntu2510: build-ubuntu2510
