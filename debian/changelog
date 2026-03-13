@@ -1,3 +1,9 @@
+modsecurity (3.0.14-1hn3DebRelDistrib) UNRELEASED; urgency=medium
+
+  * Update LuaJIT to 2.1.20260114-1hn1
+
+ -- Hiroaki Nakamura <hnakamur@gmail.com>  Fri, 13 Mar 2026 22:04:17 +0900
+
 modsecurity (3.0.14-1hn2DebRelDistrib) UNRELEASED; urgency=medium
 
   * Allow partial processing of XML and JSON request body.
