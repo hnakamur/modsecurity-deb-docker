@@ -7,6 +7,31 @@ endif
 LOGUNLIMITED_BUILDER=logunlimited
 LUAJIT_DEB_VERSION=2.1.20260114-1hn1
 
+# Ubuntu 26.04
+deb-ubuntu2604: build-ubuntu2604
+	docker run --rm -v ./modsecurity-${PKG_VERSION}-${PKG_REL_PREFIX}ubuntu26.04:/dist modsecurity-ubuntu2604 bash -c \
+	"cp /src/{lib,}modsecurity*${PKG_VERSION}* /dist/"
+	tar zcf modsecurity-${PKG_VERSION}-${PKG_REL_PREFIX}ubuntu26.04.tar.gz ./modsecurity-${PKG_VERSION}-${PKG_REL_PREFIX}ubuntu26.04/
+
+build-ubuntu2604: buildkit-logunlimited
+	sudo mkdir -p modsecurity-${PKG_VERSION}-${PKG_REL_PREFIX}ubuntu26.04
+	(set -x; \
+	git submodule foreach --recursive git remote -v; \
+	git submodule status --recursive; \
+	docker buildx build --progress plain --builder ${LOGUNLIMITED_BUILDER} --load \
+		${DOCKER_NO_CACHE} \
+		--build-arg OS_TYPE=ubuntu --build-arg OS_VERSION=26.04 \
+		--build-arg PKG_REL_DISTRIB=ubuntu26.04 \
+		--build-arg PKG_VERSION=${PKG_VERSION} \
+		--build-arg LUAJIT_DEB_VERSION=${LUAJIT_DEB_VERSION} \
+		--build-arg LUAJIT_DEB_OS_ID=ubuntu26.04 \
+		-t modsecurity-ubuntu2604 . \
+	) 2>&1 | sudo tee modsecurity-${PKG_VERSION}-${PKG_REL_PREFIX}ubuntu26.04/modsecurity_${PKG_VERSION}-${PKG_REL_PREFIX}ubuntu26.04.build.log
+	sudo xz --force modsecurity-${PKG_VERSION}-${PKG_REL_PREFIX}ubuntu26.04/modsecurity_${PKG_VERSION}-${PKG_REL_PREFIX}ubuntu26.04.build.log
+
+run-ubuntu2604:
+	docker run --rm -it modsecurity-ubuntu2604 bash
+
 # Ubuntu 25.10
 deb-ubuntu2510: build-ubuntu2510
 	docker run --rm -v ./modsecurity-${PKG_VERSION}-${PKG_REL_PREFIX}ubuntu25.10:/dist modsecurity-ubuntu2510 bash -c \
