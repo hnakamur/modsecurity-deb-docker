@@ -1,2 +1,3 @@
-luajit-2.1.patch
 allow-partial-xml-json-request-body.patch
+add-log-fields.patch
+reopen-logs.patch

@@ -1,0 +1,103 @@
+diff --git a/headers/modsecurity/rule_message.h b/headers/modsecurity/rule_message.h
+index ba30bc88..96581795 100644
+--- a/headers/modsecurity/rule_message.h
++++ b/headers/modsecurity/rule_message.h
+@@ -25,6 +25,7 @@
+ 
+ #include <string>
+ #include <list>
++#include <utility>
+ 
+ namespace modsecurity {
+ 
+@@ -58,6 +59,9 @@ class RuleMessage {
+             m_saveMessage = true;
+         m_severity = 0;
+         m_tags.clear();
++
++        m_matchedOp.clear();
++        m_matchedVars.clear();
+     }
+ 
+     std::string log() const {
+@@ -99,6 +103,9 @@ class RuleMessage {
+     int m_severity = 0;
+ 
+     std::list<std::string> m_tags;
++
++    std::string m_matchedOp;
++    std::vector<std::pair<std::string, std::string>> m_matchedVars;
+ };
+ 
+ 
+diff --git a/src/rule_with_operator.cc b/src/rule_with_operator.cc
+index 9c356b8f..e07361af 100644
+--- a/src/rule_with_operator.cc
++++ b/src/rule_with_operator.cc
+@@ -196,6 +196,23 @@ inline void RuleWithOperator::getFinalVars(variables::Variables *vars,
+ }
+ 
+ 
++static void saveMatchedOpAndVars(Transaction *trans,
++    RuleMessage &ruleMessage,
++    const std::string &op) {
++
++    ruleMessage.m_matchedOp = op;
++
++    std::vector<const VariableValue *> l;
++    trans->m_variableMatchedVars.resolve(&l);
++    for (auto i : l) {
++        ruleMessage.m_matchedVars.push_back({i->getKey(), i->getValue()});
++    }
++    for (const VariableValue * i : l) {
++        delete i;
++    }
++}
++
++
+ bool RuleWithOperator::evaluate(Transaction *trans,
+     RuleMessage &ruleMessage) {
+     bool globalRet = false;
+@@ -303,6 +320,7 @@ bool RuleWithOperator::evaluate(Transaction *trans,
+ 
+                     ruleMessage.m_reference.append(*valueTemp.second);
+                     updateMatchedVars(trans, key, valueAfterTrans);
++                    saveMatchedOpAndVars(trans, ruleMessage, m_operator->m_op);
+                     executeActionsIndependentOfChainedRuleResult(trans,
+                         &containsBlock, ruleMessage);
+ 
+diff --git a/src/transaction.cc b/src/transaction.cc
+index bd68fda5..d2e16049 100644
+--- a/src/transaction.cc
++++ b/src/transaction.cc
+@@ -1764,6 +1764,12 @@ std::string Transaction::toJSON(int parts) {
+             RulesSet::ruleEngineStateString(
+             (RulesSetProperties::RuleEngine) getRuleEngineState()));
+ 
++        /* producer > request_body_limit_exceeded state */
++        LOGFY_ADD("request_body_limit_exceeded", m_variableInboundDataError.m_value);
++        /* producer > response_body_limit_exceeded state */
++        auto variableOutboundDataErrorValue{m_variableOutboundDataError.m_value.empty() ? std::string{"0"} : m_variableOutboundDataError.m_value};
++        LOGFY_ADD("response_body_limit_exceeded", variableOutboundDataErrorValue);
++
+         /* producer > components */
+         yajl_gen_string(g,
+             reinterpret_cast<const unsigned char*>("components"),
+@@ -1815,6 +1821,17 @@ std::string Transaction::toJSON(int parts) {
+ 
+             LOGFY_ADD("maturity", std::to_string(a.m_rule.m_maturity));
+             LOGFY_ADD("accuracy", std::to_string(a.m_rule.m_accuracy));
++
++            LOGFY_ADD("matchedOp", a.m_matchedOp);
++            yajl_gen_string(g,
++                reinterpret_cast<const unsigned char*>("matchedVars"),
++                strlen("matchedVars"));
++            yajl_gen_map_open(g);
++            for (auto b : a.m_matchedVars) {
++                LOGFY_ADD(b.first.c_str(), b.second);
++            }
++            yajl_gen_map_close(g);
++
+             yajl_gen_map_close(g);
+             yajl_gen_map_close(g);
+         }

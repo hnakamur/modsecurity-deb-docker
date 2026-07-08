@@ -27,10 +27,10 @@ ARG SRC_DIR=/src
 ARG BUILD_USER=build
 RUN useradd -m -d ${SRC_DIR} -s /bin/bash ${BUILD_USER}
 
-COPY --chown=${BUILD_USER}:${BUILD_USER} ./modsecurity/ /src/modsecurity/
 USER ${BUILD_USER}
 WORKDIR ${SRC_DIR}
 ARG PKG_VERSION
+RUN git clone --recursive -b v${PKG_VERSION} https://github.com/owasp-modsecurity/ModSecurity modsecurity
 RUN tar cf - --exclude .git --exclude debian modsecurity | xz -c > modsecurity_${PKG_VERSION}.orig.tar.xz
 COPY --chown=${BUILD_USER}:${BUILD_USER} ./debian ${SRC_DIR}/modsecurity/debian/
 WORKDIR ${SRC_DIR}/modsecurity

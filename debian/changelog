@@ -1,3 +1,13 @@
+modsecurity (3.0.16-1hn1DebRelDistrib) UNRELEASED; urgency=medium
+
+  * 3.0.16
+  * Remove luajit-2.1.patch
+  * Update allow-partial-xml-json-request-body.patch
+  * Add add-log-fields.patch
+  * Add reopen-logs.patch
+
+ -- Hiroaki Nakamura <hnakamur@gmail.com>  Wed, 08 Jul 2026 16:00:15 +0900
+
 modsecurity (3.0.14-1hn3DebRelDistrib) UNRELEASED; urgency=medium
 
   * Update LuaJIT to 2.1.20260114-1hn1

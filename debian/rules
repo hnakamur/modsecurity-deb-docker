@@ -5,7 +5,7 @@ DEB_HOST_MULTIARCH ?= $(shell dpkg-architecture -qDEB_HOST_MULTIARCH)
 # an extra package while keeping the library package multiarch
 CONFIGURE_EXTRA_FLAGS += --bindir=\$${prefix}/lib/$(DEB_HOST_MULTIARCH)/libexec --libdir=\$${prefix}/lib/$(DEB_HOST_MULTIARCH) --with-pcre2 --with-pcre=no --enable-examples
 
-export DH_VERBOSE = 1
+export DH_VERBOSE=1
 
 export DEB_BUILD_MAINT_OPTIONS = hardening=-all optimize=-lto
 export CXX=clang++
@@ -13,6 +13,10 @@ export CC=clang
 
 %:
 	dh $@
+
+override_dh_update_autotools_config:
+	./build.sh
+	dh_update_autotools_config
 
 override_dh_auto_configure:
 	CXX=$(CXX) CC=$(CC) dh_auto_configure -- $(CONFIGURE_EXTRA_FLAGS)
