@@ -5,7 +5,32 @@ DOCKER_NO_CACHE=--no-cache
 endif
 
 LOGUNLIMITED_BUILDER=logunlimited
-LUAJIT_DEB_VERSION=2.1.20260311-1hn1
+LUAJIT_DEB_VERSION=2.1.20261021-1hn1
+
+# Debian 13
+deb-debian13: build-debian13
+	docker run --rm -v ./modsecurity-${PKG_VERSION}-${PKG_REL_PREFIX}debian13:/dist modsecurity-debian13 bash -c \
+	"cp /src/{lib,}modsecurity*${PKG_VERSION}* /dist/"
+	tar zcf modsecurity-${PKG_VERSION}-${PKG_REL_PREFIX}debian13.tar.gz ./modsecurity-${PKG_VERSION}-${PKG_REL_PREFIX}debian13/
+
+build-debian13: buildkit-logunlimited
+	mkdir -p modsecurity-${PKG_VERSION}-${PKG_REL_PREFIX}debian13
+	(set -x; \
+	git submodule foreach --recursive git remote -v; \
+	git submodule status --recursive; \
+	docker buildx build --progress plain --builder ${LOGUNLIMITED_BUILDER} --load \
+		${DOCKER_NO_CACHE} \
+		--build-arg OS_TYPE=debian --build-arg OS_VERSION=13 \
+		--build-arg PKG_REL_DISTRIB=debian13 \
+		--build-arg PKG_VERSION=${PKG_VERSION} \
+		--build-arg LUAJIT_DEB_VERSION=${LUAJIT_DEB_VERSION} \
+		--build-arg LUAJIT_DEB_OS_ID=debian13 \
+		-t modsecurity-debian13 . \
+	) 2>&1 | tee modsecurity-${PKG_VERSION}-${PKG_REL_PREFIX}debian13/modsecurity_${PKG_VERSION}-${PKG_REL_PREFIX}debian13.build.log
+	xz --force modsecurity-${PKG_VERSION}-${PKG_REL_PREFIX}debian13/modsecurity_${PKG_VERSION}-${PKG_REL_PREFIX}debian13.build.log
+
+run-debian13:
+	docker run --rm -it modsecurity-debian13 bash
 
 # Ubuntu 26.04
 deb-ubuntu2604: build-ubuntu2604
