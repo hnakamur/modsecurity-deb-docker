@@ -1,5 +1,3 @@
-diff --git a/headers/modsecurity/rule_message.h b/headers/modsecurity/rule_message.h
-index ba30bc88..96581795 100644
 --- a/headers/modsecurity/rule_message.h
 +++ b/headers/modsecurity/rule_message.h
 @@ -25,6 +25,7 @@
@@ -10,7 +8,7 @@ index ba30bc88..96581795 100644
  
  namespace modsecurity {
  
-@@ -58,6 +59,9 @@ class RuleMessage {
+@@ -58,6 +59,9 @@
              m_saveMessage = true;
          m_severity = 0;
          m_tags.clear();
@@ -20,7 +18,7 @@ index ba30bc88..96581795 100644
      }
  
      std::string log() const {
-@@ -99,6 +103,9 @@ class RuleMessage {
+@@ -99,6 +103,9 @@
      int m_severity = 0;
  
      std::list<std::string> m_tags;
@@ -30,11 +28,9 @@ index ba30bc88..96581795 100644
  };
  
  
-diff --git a/src/rule_with_operator.cc b/src/rule_with_operator.cc
-index 9c356b8f..e07361af 100644
 --- a/src/rule_with_operator.cc
 +++ b/src/rule_with_operator.cc
-@@ -196,6 +196,23 @@ inline void RuleWithOperator::getFinalVars(variables::Variables *vars,
+@@ -196,6 +196,23 @@
  }
  
  
@@ -58,7 +54,7 @@ index 9c356b8f..e07361af 100644
  bool RuleWithOperator::evaluate(Transaction *trans,
      RuleMessage &ruleMessage) {
      bool globalRet = false;
-@@ -303,6 +320,7 @@ bool RuleWithOperator::evaluate(Transaction *trans,
+@@ -303,6 +320,7 @@
  
                      ruleMessage.m_reference.append(*valueTemp.second);
                      updateMatchedVars(trans, key, valueAfterTrans);
@@ -66,11 +62,9 @@ index 9c356b8f..e07361af 100644
                      executeActionsIndependentOfChainedRuleResult(trans,
                          &containsBlock, ruleMessage);
  
-diff --git a/src/transaction.cc b/src/transaction.cc
-index bd68fda5..d2e16049 100644
 --- a/src/transaction.cc
 +++ b/src/transaction.cc
-@@ -1764,6 +1764,12 @@ std::string Transaction::toJSON(int parts) {
+@@ -1684,6 +1684,12 @@
              RulesSet::ruleEngineStateString(
              (RulesSetProperties::RuleEngine) getRuleEngineState()));
  
@@ -83,7 +77,7 @@ index bd68fda5..d2e16049 100644
          /* producer > components */
          yajl_gen_string(g,
              reinterpret_cast<const unsigned char*>("components"),
-@@ -1815,6 +1821,17 @@ std::string Transaction::toJSON(int parts) {
+@@ -1735,6 +1741,17 @@
  
              LOGFY_ADD("maturity", std::to_string(a.m_rule.m_maturity));
              LOGFY_ADD("accuracy", std::to_string(a.m_rule.m_accuracy));

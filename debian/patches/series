@@ -1,3 +1,2 @@
-allow-partial-xml-json-request-body.patch
 add-log-fields.patch
 reopen-logs.patch

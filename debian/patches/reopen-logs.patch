@@ -1,8 +1,6 @@
-diff --git a/src/parser/seclang-scanner.cc b/src/parser/seclang-scanner.cc
-index 0771c756..4db7e574 100644
 --- a/src/parser/seclang-scanner.cc
 +++ b/src/parser/seclang-scanner.cc
-@@ -4941,6 +4941,7 @@ char *yytext;
+@@ -5460,6 +5460,7 @@
  #include "src/parser/seclang-parser.hh"
  #include "src/utils/https_client.h"
  #include "src/utils/string.h"
@@ -10,7 +8,7 @@ index 0771c756..4db7e574 100644
  
  using modsecurity::Parser::Driver;
  using modsecurity::Utils::HttpsClient;
-@@ -8388,8 +8389,7 @@ YY_RULE_SETUP
+@@ -8972,8 +8973,7 @@
          driver.loc.push_back(new yy::location());
          driver.m_filenames.push_back(f);
          driver.loc.back()->begin.filename = driver.loc.back()->end.filename = &(driver.m_filenames.back());
@@ -20,7 +18,7 @@ index 0771c756..4db7e574 100644
              BEGIN(INITIAL);
              driver.loc.pop_back();
              driver.error (*driver.loc.back(), "", s + std::string(": Not able to open file. ") + err);
-@@ -8420,9 +8420,7 @@ YY_RULE_SETUP
+@@ -9004,9 +9004,7 @@
          driver.loc.push_back(new yy::location());
          driver.m_filenames.push_back(f);
          driver.loc.back()->begin.filename = driver.loc.back()->end.filename = &(driver.m_filenames.back());
@@ -31,8 +29,6 @@ index 0771c756..4db7e574 100644
              BEGIN(INITIAL);
              driver.loc.pop_back();
              driver.error (*driver.loc.back(), "", s + std::string(": Not able to open file. ") + err);
-diff --git a/src/parser/seclang-scanner.ll b/src/parser/seclang-scanner.ll
-index efb54e8d..c00748fa 100755
 --- a/src/parser/seclang-scanner.ll
 +++ b/src/parser/seclang-scanner.ll
 @@ -8,6 +8,7 @@
@@ -43,7 +39,7 @@ index efb54e8d..c00748fa 100755
  
  using modsecurity::Parser::Driver;
  using modsecurity::Utils::HttpsClient;
-@@ -1273,8 +1274,7 @@ EQUALS_MINUS                            (?i:=\-)
+@@ -1300,8 +1301,7 @@
          driver.loc.push_back(new yy::location());
          driver.m_filenames.push_back(f);
          driver.loc.back()->begin.filename = driver.loc.back()->end.filename = &(driver.m_filenames.back());
@@ -53,7 +49,7 @@ index efb54e8d..c00748fa 100755
              BEGIN(INITIAL);
              driver.loc.pop_back();
              driver.error (*driver.loc.back(), "", s + std::string(": Not able to open file. ") + err);
-@@ -1303,8 +1303,7 @@ EQUALS_MINUS                            (?i:=\-)
+@@ -1330,8 +1330,7 @@
          driver.m_filenames.push_back(f);
          driver.loc.back()->begin.filename = driver.loc.back()->end.filename = &(driver.m_filenames.back());
  
@@ -63,8 +59,6 @@ index efb54e8d..c00748fa 100755
              BEGIN(INITIAL);
              driver.loc.pop_back();
              driver.error (*driver.loc.back(), "", s + std::string(": Not able to open file. ") + err);
-diff --git a/src/utils/shared_files.cc b/src/utils/shared_files.cc
-index 6982d0d6..4d313bde 100644
 --- a/src/utils/shared_files.cc
 +++ b/src/utils/shared_files.cc
 @@ -14,6 +14,7 @@
@@ -75,7 +69,7 @@ index 6982d0d6..4d313bde 100644
  
  #include <fcntl.h>
  #ifdef WIN32
-@@ -27,8 +28,8 @@ namespace utils {
+@@ -27,8 +28,8 @@
  
  SharedFiles::handlers_map::iterator SharedFiles::add_new_handler(
      const std::string &fileName, std::string *error) {
@@ -86,8 +80,6 @@ index 6982d0d6..4d313bde 100644
          error->assign("Failed to open file: " + fileName);
          return m_handlers.end();
      }
-diff --git a/src/utils/system.cc b/src/utils/system.cc
-index 830b3424..6fd4ced5 100644
 --- a/src/utils/system.cc
 +++ b/src/utils/system.cc
 @@ -13,6 +13,7 @@
@@ -98,7 +90,7 @@ index 830b3424..6fd4ced5 100644
  #include <stdio.h>
  #include <stdlib.h>
  #include <stddef.h>
-@@ -205,8 +206,8 @@ bool createDir(const std::string& dir, int mode, std::string *error) {
+@@ -205,8 +206,8 @@
  
  bool isFile(const std::string& f) {
      struct stat fileInfo;
@@ -109,7 +101,7 @@ index 830b3424..6fd4ced5 100644
          return false;
      }
      fstat(fileno(fp), &fileInfo);
-@@ -219,6 +220,22 @@ bool isFile(const std::string& f) {
+@@ -219,6 +220,22 @@
      return true;
  }
  
@@ -133,11 +125,9 @@ index 830b3424..6fd4ced5 100644
 +#endif
  }  // namespace utils
  }  // namespace modsecurity
-diff --git a/src/utils/system.h b/src/utils/system.h
-index d6b0adf6..9ffd3f27 100644
 --- a/src/utils/system.h
 +++ b/src/utils/system.h
-@@ -33,6 +33,7 @@ std::string get_path(const std::string& file);
+@@ -33,6 +33,7 @@
  std::list<std::string> expandEnv(const std::string& var, int flags);
  bool createDir(const std::string& dir, int mode, std::string *error);
  bool isFile(const std::string& f);
